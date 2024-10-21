@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-commerce Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center" style="padding: 20px; background-color: #343a40; color: white;">
+            <h1>E-commerce Dashboard</h1>
+        </header>
+
+        <div class="alert alert-dismissible fade" id="success-alert" role="alert">
+            <strong id="success-message"></strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+        </div>
+
+        <div class="row" id="product-list"></div>
+
+        <footer class="text-center" style="padding: 20px; margin-top: 40px; background-color: #343a40; color: white;">
+            <p>Contact Us | Follow Us on Social Media</p>
+        </footer>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Laptop", price: 1500, stock: 5, image: "laptop.png" },
+            { id: 2, name: "Headphones", price: 100, stock: 10, image: "headphone.png" },
+            { id: 3, name: "Keyboard", price: 50, stock: 20, image: "keyboard.png" },
+        ];
+
+        function renderProducts() {
+            let html = "";
+            products.forEach((product) => {
+                html += `
+                    <div class="col-md-4 mb-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">${product.name}</div>
+                            <div class="panel-body text-center">
+                                <img src="${product.image}" class="img-responsive center-block" alt="${product.name}" style="height: 150px; object-fit: cover;">
+                                <p>Price: $${product.price}</p>
+                                <p>Stock: ${product.stock}</p>
+                                <button class="btn btn-primary add-to-cart" data-id="${product.id}">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById("product-list").innerHTML = html;
+        }
+
+        function addToCart(productId) {
+            const product = products.find((p) => p.id === Number(productId));
+            if (product) {
+                const message = { type: "ADD_TO_CART", product };
+                processMessage(message);
+            }
+        }
+
+        function processMessage(message) {
+            if (message.type === "ADD_TO_CART") {
+                const productName = message.product.name;
+                document.getElementById("success-message").innerText = `The ${productName} was added to the cart successfully.`;
+                const alert = document.getElementById("success-alert");
+                alert.classList.remove("fade");
+                alert.classList.add("show");
+                setTimeout(() => {
+                    alert.classList.add("fade");
+                    alert.classList.remove("show");
+                }, 3000);
+            }
+        }
+
+        renderProducts();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const addToCartButtons = document.querySelectorAll(".add-to-cart");
+            addToCartButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const productId = button.getAttribute("data-id");
+                    addToCart(productId);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
